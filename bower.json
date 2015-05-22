@@ -1,0 +1,17 @@
+{
+  "name": "expense-pro",
+  "main": "index.js",
+  "version": "0.0.0",
+  "authors": [
+    "Ashmeet Sidhu <ashmeet.sidhu7@gmail.com>"
+  ],
+  "description": "Expense tracking application",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
