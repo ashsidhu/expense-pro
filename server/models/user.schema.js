@@ -3,7 +3,6 @@
 var knex = require('../config/db').knex;
 
 knex.schema.hasTable('users').then(function(exists) {
-  console.log('users, ', exists)
   if (!exists) {
     return knex.schema.createTable('users', function(user) {
       user.increments('id').primary();
