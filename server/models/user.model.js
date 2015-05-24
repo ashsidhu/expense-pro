@@ -29,14 +29,35 @@ var User = bookshelf.Model.extend({
       return bcrypt.hash(password, 8, function(err, hash) {
         if (err) {
           return reject({
-            message: 'hash',
+            message: 'hash error',
             error: true
           });
         }
         return resolve(hash);
       });
     });
+  },
+  stripPassword: function () {
+    return {
+      username: this.get('username'),
+      id: this.get('id'),
+      role: this.get('role'),
+      created_at: this.get('created_at'),
+      updated_at: this.get('updated_at')
+    }
   }
 });
 
-module.exports = User;
+var Users = bookshelf.Collection.extend({
+  model: User,
+  stripPasswords: function () {
+    return this.models.map(function (model) {
+      return model.stripPassword();
+    });
+  }
+});
+
+module.exports = {
+  model: User,
+  collection: Users
+};

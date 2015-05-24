@@ -6,7 +6,8 @@ util.send200 = function (res, data) {
   data = data || 'OK';
   return res.status(200).json({
     error: false,
-    data: data
+    data: data,
+    length: data.length || null
   });
 };
 

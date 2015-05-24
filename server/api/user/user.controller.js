@@ -3,17 +3,19 @@
 var jwt = require('jsonwebtoken');
 var config = require('../../config/server');
 var util = require('../util')
-var User = require('../../models/user.model')
+var User = require('../../models/user.model').model;
+var Users = require('../../models/user.model').collection;
 var controller = {};
 
 controller.index = function (req, res) {
-  User.fetchAll()
-  .then(function (collection) {
-    res.json(collection)
+  Users.forge()
+  .fetch()
+  .then(function (users) {
+    return util.send200(res, users.stripPasswords());
   }).catch(function () {
-    util.send500(res);
-  })
-}
+    return util.send500(res);
+  });
+};
 
 controller.create = function (req, res) {
   var password = req.body.password;
@@ -34,11 +36,55 @@ controller.create = function (req, res) {
     if (error.message === 'password length') {
       return util.send400(res, 'Password should be atleast 8 characters')
     }
-    if (error.message === 'hash') {
+    if (error.message === 'hash error') {
       return util.send500(res, 'Error in storing user data')
     }
     return util.send500(res, 'Error in server')
   });
+};
+
+User.forge({id: '47'})
+  .fetch()
+  .then(function (user) {
+    console.log(user)
+  })
+
+controller.show = function (req, res) {
+  return User.forge({id: req.params.id})
+  .fetch()
+  .then(function (user) {
+    if (!user) {
+      return util.send404(res, 'id:' + req.params.id + ' not found')
+    }
+    return util.send200(res, user.stripPassword())
+  }).catch(function (error) {
+    return util.send500(res, 'Error in server')
+  })
+};
+
+controller.updateRole = function (req, res) {
+  if (['user', 'manager', 'admin'].indexOf(req.body.role) === -1) {
+    return util.send400(res, 'send valid role')
+  }
+
+  return User.forge({id: req.params.id})
+  .save({
+    role:req.body.role
+  }, {patch: true})
+  .then(function (user) {
+    if (!user) {
+      throw new Error('not found');
+    }
+
+    return util.send200(res, user.stripPassword())
+  }).catch(function (error) {
+    if (error.message === 'not found') {
+      return util.send400(res, 'id:' + req.params.id + ' not found')
+    }
+    if (error.message === 'invalid role') {
+    }
+    return util.send500(res, 'Error in server')
+  })
 }
 
 module.exports = controller;
