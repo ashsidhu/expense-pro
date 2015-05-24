@@ -9,7 +9,9 @@ var Expense = require('./expense.model');
 var User = bookshelf.Model.extend({
   tableName: 'users',
   initialize: function () {
-    this.set('role', 'user');
+    if (!this.get('role')) {
+      this.set('role', 'user');
+    }
 
   },
   hasTimestamps: true,

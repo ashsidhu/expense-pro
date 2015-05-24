@@ -1,5 +1,7 @@
 'use strict';
 
+var jwt = require('jsonwebtoken');
+var config = require('../../config/server');
 var util = require('../util')
 var User = require('../../models/user.model')
 var controller = {};
@@ -22,9 +24,9 @@ controller.create = function (req, res) {
     return req.body;
   }).then(function (userData) {
     return newUser.set(userData).save();
-  }).then(function () {
-    // set jwt
-    return util.send200(res);
+  }).then(function (user) {
+    var token = jwt.sign({id: user.id }, config.sessionSecret, { expiresInMinutes: 60*5 });
+    return util.send200(res, {token: token});
   }).catch(function(error) {
     if (error.code === '23505') {
       return util.send400(res, 'username already exists');
