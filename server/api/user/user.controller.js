@@ -43,18 +43,12 @@ controller.create = function (req, res) {
   });
 };
 
-User.forge({id: '47'})
-  .fetch()
-  .then(function (user) {
-    console.log(user)
-  })
-
 controller.show = function (req, res) {
   return User.forge({id: req.params.id})
   .fetch()
   .then(function (user) {
     if (!user) {
-      return util.send404(res, 'id:' + req.params.id + ' not found')
+      return util.send404(res, 'id:' + req.params.id + ' not found');
     }
     return util.send200(res, user.stripPassword())
   }).catch(function (error) {
@@ -66,24 +60,39 @@ controller.updateRole = function (req, res) {
   if (['user', 'manager', 'admin'].indexOf(req.body.role) === -1) {
     return util.send400(res, 'send valid role')
   }
-
-  return User.forge({id: req.params.id})
-  .save({
-    role:req.body.role
-  }, {patch: true})
+  var newUser = User.forge({id: req.params.id})
+  return newUser.fetch()
   .then(function (user) {
     if (!user) {
       throw new Error('not found');
     }
-
-    return util.send200(res, user.stripPassword())
-  }).catch(function (error) {
+    return newUser.save({'role': req.body.role}, {method: 'update', patch:true})
+  }).then(function () {
+    return util.send200(res, 'role saved')
+  })
+  .catch(function (error) {
     if (error.message === 'not found') {
-      return util.send400(res, 'id:' + req.params.id + ' not found')
+      return util.send400(res, 'id:' + req.params.id + ' not found');
     }
-    if (error.message === 'invalid role') {
+    return util.send500(res, 'Error in server');
+  })
+}
+
+controller.remove = function(req, res) {
+  return User.forge({id: req.params.id})
+  .fetch()
+  .then(function (user) {
+    if (!user) {
+      throw new Error('not found');
     }
-    return util.send500(res, 'Error in server')
+    return user.destroy()
+  }).then(function() {
+    return util.send200(res, 'user destroyed');
+  }).catch(function(error) {
+    if (error.message === 'not found') {
+      return util.send400(res, 'id:' + req.params.id + ' not found');
+    }
+    return util.send500(res, 'Error in server');
   })
 }
 

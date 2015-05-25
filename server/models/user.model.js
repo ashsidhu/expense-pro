@@ -5,7 +5,6 @@ var bcrypt = require('bcrypt');
 var bookshelf = require('../config/db');
 var Expense = require('./expense.model');
 
-
 var User = bookshelf.Model.extend({
   tableName: 'users',
   initialize: function () {
@@ -56,6 +55,7 @@ var Users = bookshelf.Collection.extend({
     });
   }
 });
+
 
 module.exports = {
   model: User,

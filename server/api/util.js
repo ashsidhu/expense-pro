@@ -7,7 +7,7 @@ util.send200 = function (res, data) {
   return res.status(200).json({
     error: false,
     data: data,
-    length: data.length || null
+    length: Array.isArray(data) ? data.length : null
   });
 };
 
