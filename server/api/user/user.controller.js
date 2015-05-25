@@ -2,7 +2,7 @@
 
 var jwt = require('jsonwebtoken');
 var config = require('../../config/server');
-var util = require('../util')
+var util = require('../util');
 var User = require('../../models/user.model').model;
 var Users = require('../../models/user.model').collection;
 var controller = {};
