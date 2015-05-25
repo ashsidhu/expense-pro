@@ -1,8 +1,10 @@
 'use strict';
 
 // var errors = require('./components/errors');
+var express = require('express');
 
 module.exports = function(app) {
+  app.use(express.static(app.get('clientPath')));
 
   // app.use('/api/expenses', require('./api/expense'));
   app.use('/api/users', require('./api/user'));
@@ -14,7 +16,7 @@ module.exports = function(app) {
   //  .get(errors[404]);
 
   // All other routes should redirect to the index.html
-  app.get('/', function(req, res) {
+  app.get('/*', function(req, res) {
     res.sendfile(app.get('clientPath') + '/index.html');
   });
 };

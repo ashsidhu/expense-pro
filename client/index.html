@@ -1,1 +1,22 @@
-hello
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Expense Pro</title>
+  <base href="/">
+</head>
+<body ng-app="expense">
+  <div class="container-fluid">
+    <div ui-view=""></div>
+  </div>
+
+  <!-- library scripts -->
+  <script src="lib/angular/angular.min.js"></script>
+  <script src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <!-- end library scripts -->
+
+  <!-- application scripts -->
+  <script src="app/app.js"></script>
+  <!-- end application scripts -->
+</body>
+</html>
