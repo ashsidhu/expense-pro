@@ -130,4 +130,8 @@ controller.remove = function(req, res) {
   })
 }
 
+controller.isAuthorized = function(req, res) {
+  console.log(req.user)
+}
+
 module.exports = controller;

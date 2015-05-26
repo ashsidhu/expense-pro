@@ -4,7 +4,12 @@ var util = {};
 var jwt = require('express-jwt')
 var server = require('../config/server');
 
-util.authenticate = jwt({ secret: server.sessionSecret})
+util.authenticate = jwt({
+  secret: server.sessionSecret,
+  getToken: function (req) {
+    return req.headers.token;
+  }
+})
 
 util.send200 = function (res, data) {
   data = data || 'OK';
