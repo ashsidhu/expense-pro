@@ -2,7 +2,27 @@ var components = '/app/components';
 var expenseApp = angular.module('expense', ['ui.router' ]);
 
 expenseApp
-.config(function($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
+.config(config)
+.factory('authInterceptor', authInterceptor)
+.service('auth', authService)
+.run(function ($rootScope, $state, auth) {
+  $rootScope.$on('$stateChangeStart', function (event, next) {
+    if (!next.name) {
+      return
+    }
+    if (next.authenticate && !auth.isLoggedIn()) {
+      // send logged out user to login
+      event.preventDefault();
+      $state.go('login');
+    } else if ((['login', 'signup'].indexOf(next.name) > -1) && auth.isLoggedIn()) {
+      // send logged in user straight to dashboard
+      event.preventDefault();
+      $state.go('dashboard');
+    }
+  });
+})
+
+function config($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
   $urlRouterProvider.otherwise('/');
 
   $stateProvider
@@ -16,35 +36,28 @@ expenseApp
     })
     .state('signup', {
       url: '/signup',
-      templateUrl: components + '/signup/signup.template.html',
-      authenticate: true
-
+      templateUrl: components + '/signup/signup.template.html'
     })
     .state('dashboard', {
       url: '/dashboard',
       templateUrl: components + '/dashboard/dashboard.template.html',
       authenticate: true
+    })
+    .state('users', {
+      url: '/users',
+      templateUrl: components + '/manager/manager.template.html',
+      authenticate: true
     });
 
   $locationProvider.html5Mode(true);
   $httpProvider.interceptors.push('authInterceptor');
-}).factory('authInterceptor', authInterceptor)
-.service('auth', authService)
-// .run(function ($rootScope, $state, auth) {
-//       $state.go('login');
-//   // $rootScope.$on('$stateChangeStart', function (event, next) {
-//   //   if (next.name && next.authenticate && !auth.isLoggedIn()) {
-//   //     debugger
-//   //     $state.go('login');
-//   //   }
-//   // });
-// })
+}
+
 
 function authInterceptor(auth) {
   return {
     // automatically attach Authorization header
     request: function(config) {
-      console.log(config)
       var token;
       if (token = auth.getToken()) {
         config.headers.token = token;
@@ -54,7 +67,6 @@ function authInterceptor(auth) {
     },
 
     response: function(res) {
-      console.log(res.data)
       if(res.config.url.indexOf('api') !== -1 && res.data.data.token) {
         auth.saveToken(res.data.data.token);
       }
@@ -63,7 +75,6 @@ function authInterceptor(auth) {
     },
 
     responseError: function(res) {
-      console.log(res)
       if (res.status === 401) {
         auth.logout()
       }
@@ -71,8 +82,9 @@ function authInterceptor(auth) {
   }
 }
 
-function authService($window) {
+function authService($window, $injector) {
   this.$window = $window
+  this.$injector = $injector
 }
 authService.prototype.parseJwt = function (token) {
   var base64Url = token.split('.')[1];
@@ -81,6 +93,7 @@ authService.prototype.parseJwt = function (token) {
 }
 authService.prototype.saveToken = function(token) {
   this.$window.localStorage.jwtToken = token;
+  this.$injector.get('$state').go('dashboard');
 }
 authService.prototype.getToken = function() {
   return this.$window.localStorage.jwtToken;
@@ -95,5 +108,6 @@ authService.prototype.isLoggedIn = function () {
 }
 authService.prototype.logout = function() {
   this.$window.localStorage.removeItem('jwtToken');
+  this.$injector.get('$state').go('login');
 }
 
