@@ -28,6 +28,14 @@ util.send400 = function (res, message) {
   });
 };
 
+util.send403 = function (res, message) {
+  message = message || 'Not permitted';
+  return res.status(403).json({
+    error: true,
+    data: message
+  });
+};
+
 util.send404 = function (res, message) {
   message = message || 'Resource Not Found';
   return res.status(404).json({

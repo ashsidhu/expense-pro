@@ -33,7 +33,7 @@ controller.create = function (req, res) {
   }).then(function (userData) {
     return newUser.set(userData).save();
   }).then(function (user) {
-    return sendToken(res, {id: user.id });
+    return sendToken(res, {id: user.id, role: user.get('role') });
   }).catch(function(error) {
     if (error.code === errors.PG_DUPLICATE_KEY) {
       return util.send400(res, 'username already exists');
@@ -60,7 +60,7 @@ controller.login = function (req, res) {
     }
     return users.models[0].validatePassword(req.body.password)
   }).then(function (user) {
-    return sendToken(res, {id: user.id })
+    return sendToken(res, {id: user.id, role: user.get('role') })
   }).catch(function (error) {
     if (error.code === errors.INVALID_CREDENTIALS) {
       return util.send404(res, 'invalid credentials')
@@ -130,8 +130,12 @@ controller.remove = function(req, res) {
   })
 }
 
-controller.isAuthorized = function(req, res) {
-  console.log(req.user)
+controller.isAuthorized = function(req, res, next) {
+  // will pass to next if user.role is manager or admin
+  if (['manager', 'admin'].indexOf(req.user.role) === -1) {
+    return util.send403(res)
+  }
+  return next()
 }
 
 module.exports = controller;
