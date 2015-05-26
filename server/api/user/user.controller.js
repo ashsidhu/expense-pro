@@ -19,7 +19,7 @@ controller.index = function (req, res) {
   .then(function (users) {
     return util.send200(res, users.stripPasswords());
   }).catch(function () {
-    return util.send500(res);
+    return util.send500(res, errors.SERVER_ERROR);
   });
 };
 
@@ -35,16 +35,10 @@ controller.create = function (req, res) {
   }).then(function (user) {
     return sendToken(res, {id: user.id, role: user.get('role') });
   }).catch(function(error) {
-    if (error.code === errors.PG_DUPLICATE_KEY) {
-      return util.send400(res, 'username already exists');
+    if (error.code === errors.PG_DUPLICATE_KEY || error.code === errors.PASSWORD_SHORT) {
+      return util.send400(res, error.code);
     }
-    if (error.code === errors.PASSWORD_SHORT) {
-      return util.send400(res, 'Password should be atleast 8 characters')
-    }
-    if (error.code === errors.SERVER_ERROR) {
-      return util.send500(res, 'Error in storing user data')
-    }
-    return util.send500(res, 'Error in server')
+    return util.send500(res, errors.SERVER_ERROR)
   });
 };
 
@@ -63,9 +57,9 @@ controller.login = function (req, res) {
     return sendToken(res, {id: user.id, role: user.get('role') })
   }).catch(function (error) {
     if (error.code === errors.INVALID_CREDENTIALS) {
-      return util.send404(res, 'invalid credentials')
+      return util.send404(res, error.code)
     }
-    return util.send500(res, 'Error in server')
+    return util.send500(res, errors.SERVER_ERROR)
   }) 
 }
 
@@ -79,7 +73,7 @@ controller.show = function (req, res) {
     }
     return util.send200(res, users.models[0].stripPassword());
   }).catch(function (error) {
-    return util.send500(res, 'Error in server')
+    return util.send500(res, errors.SERVER_ERROR)
   })
 };
 
@@ -126,14 +120,14 @@ controller.remove = function(req, res) {
     if (error.code === errors.NOT_FOUND) {
       return util.send400(res, 'id:' + req.params.id + ' not found');
     }
-    return util.send500(res, 'Error in server');
+    return util.send500(res, errors.SERVER_ERROR);
   })
 }
 
 controller.isAuthorized = function(req, res, next) {
   // will pass to next if user.role is manager or admin
   if (['manager', 'admin'].indexOf(req.user.role) === -1) {
-    return util.send403(res)
+    return util.send403(res, errors.UNAUTHORIZED)
   }
   return next()
 }

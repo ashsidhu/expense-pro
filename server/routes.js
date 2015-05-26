@@ -4,7 +4,6 @@
 var express = require('express');
 
 module.exports = function(app) {
-  app.use(express.static(app.get('clientPath')));
   // app.use('/api/expenses', require('./api/expense'));
   app.use('/api/users', require('./api/user'));
 
