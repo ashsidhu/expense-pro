@@ -5,6 +5,7 @@ var config = require('../../config/server');
 var util = require('../util');
 var User = require('../../models/user.model').model;
 var Users = require('../../models/user.model').collection;
+var errors = require('../../config/errorCodes')
 var controller = {};
 
 function sendToken(res, payload) {
@@ -32,15 +33,15 @@ controller.create = function (req, res) {
   }).then(function (userData) {
     return newUser.set(userData).save();
   }).then(function (user) {
-    return sendToken({id: user.id });
+    return sendToken(res, {id: user.id });
   }).catch(function(error) {
-    if (error.code === '23505') {
+    if (error.code === errors.PG_DUPLICATE_KEY) {
       return util.send400(res, 'username already exists');
     }
-    if (error.message === 'password length') {
+    if (error.code === errors.PASSWORD_SHORT) {
       return util.send400(res, 'Password should be atleast 8 characters')
     }
-    if (error.message === 'hash error') {
+    if (error.code === errors.SERVER_ERROR) {
       return util.send500(res, 'Error in storing user data')
     }
     return util.send500(res, 'Error in server')
@@ -53,14 +54,15 @@ controller.login = function (req, res) {
   .fetchAll()
   .then(function (users) {
     if (!users.models.length) {
-      throw new Error('invalid credentials');
+      var error = (new Error)
+      error.code = errors.INVALID_CREDENTIALS;
+      throw error;
     }
-    // console.log('here', users.models[0].validatePassword)
     return users.models[0].validatePassword(req.body.password)
   }).then(function (user) {
     return sendToken(res, {id: user.id })
   }).catch(function (error) {
-    if (error.message === 'invalid credentials') {
+    if (error.code === errors.INVALID_CREDENTIALS) {
       return util.send404(res, 'invalid credentials')
     }
     return util.send500(res, 'Error in server')

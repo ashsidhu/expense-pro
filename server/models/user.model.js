@@ -4,6 +4,7 @@ var Promise = require('bluebird');
 var bcrypt = require('bcrypt');
 var bookshelf = require('../config/db');
 var Expense = require('./expense.model');
+var errors = require('../config/errorCodes')
 
 var User = bookshelf.Model.extend({
   tableName: 'users',
@@ -22,14 +23,14 @@ var User = bookshelf.Model.extend({
       if (password.length < 8) {
         return reject({
           error: true,
-          message: 'password length'
+          code: errors.PASSWORD_SHORT
         });
       }
       return bcrypt.hash(password, 8, function(err, hash) {
         if (err) {
           return reject({
-            message: 'hash error',
-            error: true
+            error: true,
+            code: errors.SERVER_ERROR
           });
         }
         return resolve(hash);
@@ -53,12 +54,12 @@ var User = bookshelf.Model.extend({
         if (err) {
           return reject({
             error: true,
-            message: 'server error'
+            code: errors.SERVER_ERROR
           });
         } else if (!match) {
           return reject({
             error: true,
-            message: 'invalid credentials'
+            code: errors.INVALID_CREDENTIALS
           });
         }
         return resolve(user);
