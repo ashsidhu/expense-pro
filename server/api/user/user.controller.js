@@ -7,6 +7,11 @@ var User = require('../../models/user.model').model;
 var Users = require('../../models/user.model').collection;
 var controller = {};
 
+function sendToken(res, payload) {
+  var token = jwt.sign(payload, config.sessionSecret, { expiresInMinutes: 60*5 });
+  return util.send200(res, {token: token});
+}
+
 controller.index = function (req, res) {
   Users.forge()
   .fetch()
@@ -27,8 +32,7 @@ controller.create = function (req, res) {
   }).then(function (userData) {
     return newUser.set(userData).save();
   }).then(function (user) {
-    var token = jwt.sign({id: user.id }, config.sessionSecret, { expiresInMinutes: 60*5 });
-    return util.send200(res, {token: token});
+    return sendToken({id: user.id });
   }).catch(function(error) {
     if (error.code === '23505') {
       return util.send400(res, 'username already exists');
@@ -42,6 +46,26 @@ controller.create = function (req, res) {
     return util.send500(res, 'Error in server')
   });
 };
+
+controller.login = function (req, res) {
+  return User.forge()
+  .query({where: {username: req.body.username}})
+  .fetchAll()
+  .then(function (users) {
+    if (!users.models.length) {
+      throw new Error('invalid credentials');
+    }
+    // console.log('here', users.models[0].validatePassword)
+    return users.models[0].validatePassword(req.body.password)
+  }).then(function (user) {
+    return sendToken(res, {id: user.id })
+  }).catch(function (error) {
+    if (error.message === 'invalid credentials') {
+      return util.send404(res, 'invalid credentials')
+    }
+    return util.send500(res, 'Error in server')
+  }) 
+}
 
 controller.show = function (req, res) {
   return User.forge()

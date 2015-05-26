@@ -44,6 +44,26 @@ var User = bookshelf.Model.extend({
       created_at: this.get('created_at'),
       updated_at: this.get('updated_at')
     }
+  },
+  validatePassword: function (password) {
+    var user = this;
+    return new Promise(function (resolve, reject) {
+
+      return bcrypt.compare(password, user.get('password'), function(err, match) {
+        if (err) {
+          return reject({
+            error: true,
+            message: 'server error'
+          });
+        } else if (!match) {
+          return reject({
+            error: true,
+            message: 'invalid credentials'
+          });
+        }
+        return resolve(user);
+      })
+    });
   }
 });
 
