@@ -9,11 +9,10 @@ function LoginController($state, $http) {
 }
 
 LoginController.prototype.postCredentials = function() {
-  this.$http.post('/api/users/login', {
+  var vm = this;
+  return this.$http.post('/api/users/login', {
     username: this.username,
     password: this.password
-  }).then(function(body) {
-    console.log(body)
   })
 }
 

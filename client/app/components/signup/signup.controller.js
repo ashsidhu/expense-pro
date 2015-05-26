@@ -1,15 +1,19 @@
 angular.module('expense')
   .controller('signup.controller', SignupController);
 
-function SignupController($state) {
+function SignupController($http, $state) {
   this.username = '';
   this.password = '';
+  this.$http = $http;
   this.$state = $state;
 }
 
 SignupController.prototype.signup = function() {
-  console.log(this)
-  this.$state.go('login')
+  var vm = this;
+  return this.$http.post('/api/users/', {
+    username: this.username,
+    password: this.password
+  })
 }
 
 SignupController.prototype.validate = function() {
