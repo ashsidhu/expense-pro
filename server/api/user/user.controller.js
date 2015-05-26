@@ -93,14 +93,16 @@ controller.updateRole = function (req, res) {
   .fetchAll()
   .then(function (users) {
     if (!users.models.length) {
-      throw new Error('not found');
+      var error = (new Error)
+      error.code = errors.NOT_FOUND;
+      throw error;
     }
     return users.models[0].set({'role': req.body.role}).save()
   }).then(function () {
     return util.send200(res, 'role saved')
   })
   .catch(function (error) {
-    if (error.message === 'not found') {
+    if (error.code === errors.NOT_FOUND) {
       return util.send400(res, 'id:' + req.params.id + ' not found');
     }
     return util.send500(res, 'Error in server');
@@ -113,13 +115,15 @@ controller.remove = function(req, res) {
   .fetchAll()
   .then(function (users) {
     if (!users.models.length) {
-      throw new Error('not found');
+      var error = (new Error)
+      error.code = errors.NOT_FOUND;
+      throw error;
     }
     return users.models[0].destroy()
   }).then(function() {
     return util.send200(res, 'user destroyed');
   }).catch(function(error) {
-    if (error.message === 'not found') {
+    if (error.code === errors.NOT_FOUND) {
       return util.send400(res, 'id:' + req.params.id + ' not found');
     }
     return util.send500(res, 'Error in server');
