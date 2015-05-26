@@ -1,6 +1,10 @@
 'use strict';
 
 var util = {};
+var jwt = require('express-jwt')
+var server = require('../config/server');
+
+util.authenticate = jwt({ secret: server.sessionSecret})
 
 util.send200 = function (res, data) {
   data = data || 'OK';
