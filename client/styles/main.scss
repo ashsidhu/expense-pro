@@ -79,3 +79,23 @@ body {
     border-bottom: 0;
   }
 }
+
+.expense-list-item{
+  padding: 9px 14px;
+  margin-bottom: 14px;
+  background-color: #f7f7f9;
+  border: 1px solid #e1e1e8;
+  border-radius: 4px;
+}
+
+.datepicker-container {
+  margin: 0 15px;
+}
+.accordion-heading-inner {
+  position: relative;
+  .edit-btn {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+  }
+}

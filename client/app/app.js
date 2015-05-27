@@ -1,5 +1,5 @@
 var components = '/app/components';
-var expenseApp = angular.module('expense', ['ui.router' ]);
+var expenseApp = angular.module('expense', ['ui.router', 'ui.bootstrap']);
 
 expenseApp
 .config(config)
