@@ -1,4 +1,80 @@
 <ng-include src="'app/components/header/header.template.html'"></ng-include>
 <div ng-controller="dashboard.controller as vm" class="dashboard-container container">
-  {{vm.foo}}
+  <ng-include src="'app/components/dashboard/newExpense.template.html'"></ng-include>
+  <h2 ng-show="vm.expenses.length" class="">View all expenses</h2>
+  <accordion ng-show="vm.expenses.length" close-others="oneAtATime">
+    <accordion-group is-open="false">
+        <accordion-heading>
+            Filter your expenses <i class="pull-right glyphicon glyphicon-filter" ></i>
+        </accordion-heading>
+      <form class="">
+        <div class="form-group">
+          <label for="min-amount-input">Min Amount</label>
+          <input ng-model="vm.filter.minAmount" type="number" class="form-control" id="min-amount-input" placeholder="Min Amount">
+        </div>
+        <div class="form-group">
+          <label for="max-amount-input">Max Amount</label>
+          <input ng-model="vm.filter.maxAmount" type="number" class="form-control" id="max-amount-input" placeholder="Max Amount">
+        </div>
+
+        <button type="submit" class="btn btn-success">Filter</button>
+      </form>
+    </accordion-group>
+  </accordion>
+
+  <accordion ng-show="vm.expenses.length">
+    <accordion-group ng-repeat="expense in vm.expenses | orderBy: '-date'">
+      <accordion-heading>
+        <div class="accordion-heading-inner">
+          <dl class="dl-horizontal">
+            <dt>Description</dt>
+            <dd>{{expense.description}}</dd>
+            <dt >Amount</dt>
+            <dd >{{expense.amount | currency}}</dd>
+            <dt>Category</dt>
+            <dd>{{expense.category}}</dd>
+            <dt>Comment</dt>
+            <dd>{{expense.comment}}</dd>
+            <dt>Date</dt>
+            <dd>{{expense.date | date : 'mediumDate'}}</dd>
+          </dl>
+          <button class="btn btn-default edit-btn pull-right" type="submit">Edit&nbsp;<i class="pull-right glyphicon glyphicon-edit" ></i></button>
+        </div>
+      </accordion-heading>
+      <div class="accordion-content-inner">
+        <form  class=" action-form" id="expense-form">
+          <div class="form-group form-container">
+            <label for="amountInput">Amount</label>
+            <div class="input-group">
+              <div class="input-group-addon">$</div>
+              <input ng-model="expense.amount" type="number" class="form-control form-input" id="amountInput" placeholder="Amount">
+            </div>
+          </div>
+          <div class="form-group form-container">
+            <label for="descInput">Description</label>
+            <input ng-model="expense.description" type="text" class="form-control form-input" id="descInput" placeholder="Description">
+          </div>
+          <div class="form-group form-container">
+            <label for="categoryInput">Category</label>
+            <input ng-model="expense.category" type="text" class="form-control form-input" id="categoryInput" placeholder="Category">
+          </div>
+          <div class="form-group form-container">
+            <label for="commentInput">Comment</label>
+            <input ng-model="expense.comment" type="text" class="form-control form-input" id="commentInput" placeholder="Comment">
+          </div>
+          <button type="submit" class="btn " ng-class="expense.updated ? 'btn-success' : 'btn-primary'" ng-click="vm.updateExpense(expense.id, expense)">{{expense.updated ? 'Success' : 'Update'}}</button>
+          <button class="btn btn-danger" ng-click="vm.deleteExpense(expense.id)">Delete</button>
+          <!-- <div class="form-group form-container">
+            <label for="commentInput">Date</label>
+            <div class="row">
+              <div class="datepicker-container" style="display:inline-block; ">
+                <datepicker ng-model="expense.date" max-date="vm.dateOptions.today" class="well well-sm" show-weeks="false" init-date="vm.dateOptions.today"></datepicker>
+              </div>
+            </div>
+          </div> -->
+        </form>
+      </div>
+    </accordion-group>
+  </accordion>
+      
 </div>
