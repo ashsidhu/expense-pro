@@ -4,7 +4,7 @@
 var express = require('express');
 
 module.exports = function(app) {
-  // app.use('/api/expenses', require('./api/expense'));
+  app.use('/api/expenses', require('./api/expense'));
   app.use('/api/users', require('./api/user'));
 
   // All undefined asset or api routes should return a 404

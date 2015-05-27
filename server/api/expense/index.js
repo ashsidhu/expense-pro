@@ -2,13 +2,13 @@
 
 var express = require('express');
 var controller = require('./expense.controller');
+var util = require('../util');
 var router = express.Router();
 
-router.get('/', controller.index);
-router.post('/', controller.create);
+router.get('/', util.authenticate,  controller.index);
+router.post('/', util.authenticate, controller.create);
 
-router.get('/:id', controller.show)
-router.put('/:id', controller.update);
-router.delete('/:id', controller.remove);
+router.put('/:id', util.authenticate, controller.update);
+router.delete('/:id', util.authenticate, controller.remove);
 
 module.exports = router;
