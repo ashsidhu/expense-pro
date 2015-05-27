@@ -1,0 +1,44 @@
+<div ng-controller="newExpense.controller as expense" class="">
+  <accordion>
+    
+  <accordion-group is-open="expense.status.open">
+    <accordion-heading>
+      Create New Expense <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-up': expense.status.open, 'glyphicon-chevron-down': !expense.status.open}"></i>
+    </accordion-heading>
+    <form  class=" action-form" id="expense-form">
+      <div class="form-group form-container">
+        <label for="amountInput">Amount</label>
+        <input ng-model="expense.model.amount" type="number" class="form-control form-input" id="amountInput" placeholder="Amount">
+      </div>
+      <div class="form-group form-container">
+        <label for="descInput">Description</label>
+        <input ng-model="expense.model.description" type="text" class="form-control form-input" id="descInput" placeholder="Description">
+      </div>
+      <div class="form-group form-container">
+        <label for="categoryInput">Category</label>
+        <input ng-model="expense.model.category" type="text" class="form-control form-input" id="categoryInput" placeholder="Category">
+      </div>
+      <div class="form-group form-container">
+        <label for="commentInput">Comment</label>
+        <input ng-model="expense.model.comment" type="text" class="form-control form-input" id="commentInput" placeholder="Comment">
+      </div>
+      <div class="form-group form-container">
+        <label for="commentInput">Date</label>
+        <div class="row">
+          <div class="datepicker-container" style="display:inline-block; ">
+            <datepicker ng-model="expense.model.date" max-date="expense.dateOptions.today" class="well well-sm" show-weeks="false" init-date="expense.dateOptions.today"></datepicker>
+          </div>
+        </div>
+      </div>
+      <button 
+        type="submit"
+        ng-click="expense.createExpense()"
+        class="btn btn-primary action-btn"
+        id="create-btn"
+        ng-class="expense.isValid() ? '' : 'disabled'"
+      >Create</button>
+    </form>
+    </accordion-group>
+  </accordion> 
+
+</div>
