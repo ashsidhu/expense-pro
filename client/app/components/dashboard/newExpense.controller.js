@@ -22,7 +22,11 @@ NewExpenseController.prototype.createExpense = function() {
   if (!vm.isValid()) {
     return;
   }
-  return vm.$http.post('/api/expenses', vm.model)
+  var url = '/api/expenses'
+  if (vm.parent.userId) {
+    url = url + '?userId=' + vm.parent.userId
+  }
+  return vm.$http.post(url, vm.model)
   .then(function(response){
     if (response && response.status === 200) {
       vm.model = {

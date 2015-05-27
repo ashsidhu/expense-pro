@@ -10,7 +10,7 @@ var controller = {};
 
 controller.index = function (req, res) {
   var filter = {
-    user_id: req.user.id,
+    user_id: req.query.userId || req.user.id,
     category: req.query.category,
     minAmount: req.query.minAmount,
     maxAmount: req.query.maxAmount
@@ -32,8 +32,9 @@ controller.create = function (req, res) {
   return Expense.forge()
   .setAmount(req.body.amount)
   .then(function (expense) {
+    console.log(req.body, req.query)
     return expense.set({
-      user_id: req.user.id,
+      user_id: req.query.userId || req.user.id,
       description: req.body.description,
       category: req.body.category,
       date: req.body.date,

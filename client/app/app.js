@@ -47,7 +47,12 @@ function config($stateProvider, $urlRouterProvider, $locationProvider, $httpProv
       url: '/users',
       templateUrl: components + '/manager/manager.template.html',
       authenticate: true
-    });
+    })
+    .state('userDetail', {
+      url: '/users/:userId',
+      templateUrl: components + '/dashboard/dashboard.template.html',
+      authenticate: true
+    })
 
   $locationProvider.html5Mode(true);
   $httpProvider.interceptors.push('authInterceptor');
@@ -90,6 +95,12 @@ authService.prototype.parseJwt = function (token) {
   var base64Url = token.split('.')[1];
   var base64 = base64Url.replace('-', '+').replace('_', '/');
   return JSON.parse(this.$window.atob(base64));
+}
+authService.prototype.isManager = function () {
+  return (['manager', 'admin'].indexOf(this.parseJwt(this.getToken()).role) !== -1)
+}
+authService.prototype.isAdmin = function () {
+  return (['admin'].indexOf(this.parseJwt(this.getToken()).role) !== -1)
 }
 authService.prototype.saveToken = function(token) {
   this.$window.localStorage.jwtToken = token;

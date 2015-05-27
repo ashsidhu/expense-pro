@@ -1,8 +1,10 @@
 angular.module('expense')
   .controller('dashboard.controller', DashboardController);
 
-function DashboardController($state, $http, $scope) {
+function DashboardController($state, $http, $scope, $stateParams) {
+
   var vm = this;
+  vm.userId = $stateParams.userId
   vm.expenses=[{}];
   vm.getExpenses = getExpenses
   vm.updateExpense = updateExpense
@@ -32,7 +34,17 @@ function DashboardController($state, $http, $scope) {
   }
 
   function getFilterUrl() {
-    return 'api/expenses'
+    var url = 'api/expenses/?'
+    if (vm.userId) {
+      url = url + 'userId=' + vm.userId + '&'
+    }
+    if (vm.filter.minAmount) {
+      url = url + 'minAmount=' + vm.filter.minAmount + '&'
+    }
+    if (vm.filter.maxAmount) {
+      url = url + 'maxAmount=' + vm.filter.maxAmount + '&'
+    }
+    return url;
   }
 
   function updateExpense(id, expense) {

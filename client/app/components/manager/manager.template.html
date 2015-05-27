@@ -16,6 +16,7 @@
             <dd>{{user.created_at | date: 'mediumDate'}}</dd>
           </dl>
           <button class="btn btn-default edit-btn pull-right" type="submit">Edit&nbsp;<i class="pull-right glyphicon glyphicon-edit" ></i></button>
+          <button ng-show="vm.isAdmin" ng-click="vm.goToProfile($event, user.id)" class="btn btn-default view-btn pull-right" type="submit">View</button>
         </div>
       </accordion-heading>
       <div class="accordion-content-inner">

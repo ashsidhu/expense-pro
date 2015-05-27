@@ -1,12 +1,14 @@
 angular.module('expense')
   .controller('manager.controller', ManagerController);
 
-function ManagerController($state, $http) {
+function ManagerController($state, $http, auth) {
   var vm = this;
   vm.users=[{}];
   vm.getUsers = getUsers
   vm.updateUser = updateUser
   vm.deleteUser = deleteUser
+  vm.goToProfile = goToProfile
+  vm.isAdmin = auth.isAdmin()
   getUsers()
   function getUsers() {
     return $http.get('api/users')
@@ -34,5 +36,10 @@ function ManagerController($state, $http) {
         return getUsers();
       }
     })
+  }
+  function goToProfile($event, id) {
+    $event.preventDefault();
+    console.log($state)
+    $state.transitionTo('userDetail', {userId: id})
   }
 }

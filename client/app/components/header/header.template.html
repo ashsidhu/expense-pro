@@ -4,7 +4,7 @@
     <li ng-hide="vm.isLoggedIn()" ui-sref-active="active" class=""><a ui-sref="signup">Signup</a></li>
     <li ng-hide="vm.isLoggedIn()" ui-sref-active="active" class=""><a ui-sref="login">Login</a></li>
     <li ng-show="vm.isLoggedIn()" ui-sref-active="active" class=""><a ui-sref="dashboard">Dashboard</a></li>
-    <li ng-show="vm.isLoggedIn()" ui-sref-active="active" class=""><a ui-sref="users">Manage Users</a></li>
+    <li ng-show="vm.isLoggedIn() && vm.isManager()" ui-sref-active="active" class=""><a ui-sref="users">Manage Users</a></li>
     <li ng-show="vm.isLoggedIn()" ng-click="vm.logout()" class=""><a href="#">Logout</a></li>
   </ul>
   <h3 class="text-muted">Expense Pro</h3>

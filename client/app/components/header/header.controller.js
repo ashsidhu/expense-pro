@@ -13,3 +13,7 @@ HeaderController.prototype.logout = function() {
   console.log('here')
   return this.auth.logout();
 }
+
+HeaderController.prototype.isManager = function() {
+  return this.auth.isManager();
+}
