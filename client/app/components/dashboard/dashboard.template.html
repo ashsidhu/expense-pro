@@ -17,7 +17,24 @@
           <input ng-model="vm.filter.maxAmount" type="number" class="form-control" id="max-amount-input" placeholder="Max Amount">
         </div>
 
-        <button type="submit" class="btn btn-success">Filter</button>
+        <div class="form-group form-container">
+          <label for="commentInput">After Date</label>
+          <div class="row">
+            <div class="datepicker-container" style="display:inline-block; ">
+              <datepicker ng-model="vm.filter.minDate" max-date="vm.dateOptions.today" class="well well-sm" show-weeks="false" init-date="vm.dateOptions.today"></datepicker>
+            </div>
+          </div>
+        </div>
+        <div class="form-group form-container">
+          <label for="commentInput">Before Date</label>
+          <div class="row">
+            <div class="datepicker-container" style="display:inline-block; ">
+              <datepicker ng-model="vm.filter.maxDate" max-date="vm.dateOptions.today" class="well well-sm" show-weeks="false" init-date="vm.dateOptions.today"></datepicker>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-success" ng-click="vm.getExpenses()">Filter</button>
       </form>
     </accordion-group>
   </accordion>

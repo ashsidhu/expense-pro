@@ -44,6 +44,13 @@ function DashboardController($state, $http, $scope, $stateParams) {
     if (vm.filter.maxAmount) {
       url = url + 'maxAmount=' + vm.filter.maxAmount + '&'
     }
+    if (vm.filter.maxDate) {
+      console.log(vm.filter.maxDate.toString())
+      url = url + 'maxDate=' + vm.filter.maxDate.toISOString() + '&'
+    }
+    if (vm.filter.minDate) {
+      url = url + 'minDate=' + vm.filter.minDate.toISOString() + '&'
+    }
     return url;
   }
 

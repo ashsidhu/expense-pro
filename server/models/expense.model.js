@@ -36,6 +36,12 @@ var Expense = bookshelf.Model.extend({
       if (filter.maxAmount) {
         qb.andWhere('amount', '<=', filter.maxAmount)
       }
+      if (filter.maxDate) {
+        qb.andWhere('date', '<=', filter.maxDate)
+      }
+      if (filter.minDate) {
+        qb.andWhere('date', '>=', filter.minDate)
+      }
     })
   }
 });
