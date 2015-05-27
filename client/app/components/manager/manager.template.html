@@ -1,4 +1,42 @@
 <ng-include src="'app/components/header/header.template.html'"></ng-include>
 <div ng-controller="manager.controller as vm" class="manager-container container">
-  {{vm.foo}}
+  <h2 class="">View all users</h2>
+  <accordion ng-show="vm.users.length">
+    <accordion-group ng-repeat="user in vm.users">
+      <accordion-heading>
+        <div class="accordion-heading-inner">
+          <dl class="dl-horizontal">
+            <dt>Username</dt>
+            <dd>{{user.username}}</dd>
+            <dt >User ID</dt>
+            <dd >{{user.id}}</dd>
+            <dt>Role</dt>
+            <dd>{{user.role}}</dd>
+            <dt>Member Since</dt>
+            <dd>{{user.created_at | date: 'mediumDate'}}</dd>
+          </dl>
+          <button class="btn btn-default edit-btn pull-right" type="submit">Edit&nbsp;<i class="pull-right glyphicon glyphicon-edit" ></i></button>
+        </div>
+      </accordion-heading>
+      <div class="accordion-content-inner">
+        <form  class=" action-form" id="user-form">
+          <div class="form-group form-container">
+            <label for="usernameInput">Username</label>
+            <input ng-model="user.username" type="text" class="form-control form-input" id="usernameInput" placeholder="Username">
+          </div>
+          <div class="form-group form-container">
+            <label for="categoryInput">Role</label>
+            <div class="clearfix"></div>
+            <div class="btn-group role-input-radio">
+              <label class="btn btn-default" ng-class="{'btn-success': user.role === 'user'}" ng-model="user.role" btn-radio="'user'" uncheckable>User</label>
+              <label class="btn btn-default" ng-class="{'btn-success': user.role === 'manager'}" ng-model="user.role" btn-radio="'manager'" uncheckable>Manager</label>
+              <label class="btn btn-default" ng-class="{'btn-success': user.role === 'admin'}" ng-model="user.role" btn-radio="'admin'" uncheckable>Admin</label>
+            </div>
+          </div>
+          <button type="submit" class="btn " ng-class="user.updated ? 'btn-success' : 'btn-primary'" ng-click="vm.updateUser(user.id, user)">{{user.updated ? 'Success' : 'Update'}}</button>
+          <button class="btn btn-danger" ng-click="vm.deleteUser(user.id)">Delete</button>
+        </form>
+      </div>
+    </accordion-group>
+  </accordion>
 </div>

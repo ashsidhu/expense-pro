@@ -80,6 +80,8 @@ controller.show = function (req, res) {
 controller.updateRole = function (req, res) {
   if (['user', 'manager', 'admin'].indexOf(req.body.role) === -1) {
     return util.send400(res, 'send valid role')
+  } else if (!req.body.username) {
+    return util.send400(res, 'send valid username')
   }
 
   return User.forge()
@@ -91,9 +93,12 @@ controller.updateRole = function (req, res) {
       error.code = errors.NOT_FOUND;
       throw error;
     }
-    return users.models[0].set({'role': req.body.role}).save()
+    return users.models[0].set({
+      'role': req.body.role,
+      'username': req.body.username
+    }).save()
   }).then(function () {
-    return util.send200(res, 'role saved')
+    return util.send200(res, 'user details saved')
   })
   .catch(function (error) {
     if (error.code === errors.NOT_FOUND) {
